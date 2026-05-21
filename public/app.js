@@ -20,28 +20,46 @@ async function registerServiceWorkerSafely() {
   }
 }
 
+async function createScramjetController() {
+  if (!window.$scramjetLoadController) return null;
+
+  const { ScramjetController } = window.$scramjetLoadController();
+  const scramjet = new ScramjetController({
+    files: {
+      wasm: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.wasm.wasm',
+      all: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.all.js',
+      sync: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.sync.js',
+    },
+  });
+
+  await scramjet.init();
+  return scramjet;
+}
+
+function navigateToTarget(scramjet, target) {
+  if (!scramjet) {
+    window.location.href = target;
+    return;
+  }
+
+  try {
+    window.location.href = scramjet.encodeUrl(target);
+  } catch (error) {
+    console.error('[dd-web] Scramjet URL encode failed, falling back to direct nav:', error);
+    window.location.href = target;
+  }
+}
+
 async function boot() {
   const form = document.getElementById('proxy-form');
   const urlInput = document.getElementById('url');
-
   if (!form || !urlInput) return;
 
   await registerServiceWorkerSafely();
 
-  let scramjet;
+  let scramjet = null;
   try {
-    if (window.$scramjetLoadController) {
-      const { ScramjetController } = window.$scramjetLoadController();
-      scramjet = new ScramjetController({
-        files: {
-          wasm: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.wasm.wasm',
-          all: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.all.js',
-          sync: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.sync.js',
-        },
-      });
-
-      await scramjet.init();
-    }
+    scramjet = await createScramjetController();
   } catch (error) {
     console.error('[dd-web] Scramjet controller init failed:', error);
   }
@@ -50,19 +68,7 @@ async function boot() {
     event.preventDefault();
     const target = normalizeUrl(urlInput.value.trim());
     if (!target) return;
-
-    if (!scramjet) {
-      window.location.href = target;
-      return;
-    }
-
-    try {
-      const encoded = scramjet.encodeUrl(target);
-      window.location.href = encoded;
-    } catch (error) {
-      console.error('[dd-web] Scramjet URL encode failed, falling back to direct nav:', error);
-      window.location.href = target;
-    }
+    navigateToTarget(scramjet, target);
   });
 }
 
