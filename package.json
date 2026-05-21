@@ -12,5 +12,6 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "private": true
   "private": "true"
 }
