@@ -22,14 +22,16 @@ async function boot() {
     }
   }
 
-  // Set up bare-mux transport using the epoxy client loaded from /epoxy.js
-  // EpoxyTransport is the global set by epoxy's UMD bundle
+  // Set up bare-mux transport using setManualTransport with a CDN import
+  // This avoids needing to self-host the .mjs epoxy transport file
   try {
     const conn = new BareMux.BareMuxConnection("/bare-mux/worker.js");
-    const EpoxyClient = EpoxyTransport.EpoxyClient;
-    await conn.setRemoteTransport(
-      new EpoxyClient({ wisp: "wss://wisp.mercurywork.shop/" }),
-      "wss://wisp.mercurywork.shop/"
+    await conn.setManualTransport(
+      `
+        const { EpoxyClient } = await import("https://unpkg.com/@mercuryworkshop/epoxy-transport@3/dist/index.mjs");
+        return [EpoxyClient, "https://unpkg.com/@mercuryworkshop/epoxy-transport@3/dist/index.mjs"];
+      `,
+      [{ wisp: "wss://wisp.mercurywork.shop/" }]
     );
   } catch (err) {
     console.error("[dd-web] bare-mux transport setup failed:", err);
