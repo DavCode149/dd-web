@@ -15,6 +15,11 @@ async function boot() {
 
   let scramjet;
   if ('serviceWorker' in navigator) {
+    try {
+      await navigator.serviceWorker.register('/sw.js');
+    } catch (error) {
+      console.error('[dd-web] Service worker registration failed:', error);
+    }
     await navigator.serviceWorker.register('/sw.js');
   }
 
