@@ -20,21 +20,13 @@ async function registerServiceWorkerSafely() {
   }
 }
 
-async function createScramjetController() {
-  if (!window.$scramjetLoadController) return null;
-
-  const { ScramjetController } = window.$scramjetLoadController();
-  const scramjet = new ScramjetController({
-    files: {
-      wasm: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.wasm.wasm',
-      all: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.all.js',
-      sync: 'https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.sync.js',
-    },
-  });
-
-  await scramjet.init();
-  return scramjet;
-}
+const scramjet = new ScramjetController({
+  files: {
+    wasm: '/scramjet/scramjet.wasm.wasm',
+    all:  '/scramjet/scramjet.all.js',
+    sync: '/scramjet/scramjet.sync.js',
+  },
+});
 
 function navigateToTarget(scramjet, target) {
   if (!scramjet) {
