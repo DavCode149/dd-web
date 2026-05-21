@@ -18,29 +18,19 @@ async function boot() {
       await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       await navigator.serviceWorker.ready;
     } catch (err) {
-      console.error("[dd-web] Service worker registration failed:", err);
+      console.error("[dd-web] SW registration failed:", err);
     }
   }
 
-  // Init Scramjet controller
-  let scramjet = null;
+  // Configure bare-mux transport using the public Wisp server
+  // (required for scramjet to actually proxy requests)
   try {
-    const { ScramjetController } = $scramjetLoadController();
-    scramjet = new ScramjetController({
-      prefix: "/scramjet/",
-      files: {
-        wasm: "/scramjet/scramjet.wasm.wasm",
-        all:  "/scramjet/scramjet.all.js",
-        sync: "/scramjet/scramjet.sync.js",
-      },
-      flags: {
-        captureErrors: true,
-        strictRewrites: true,
-      },
-    });
-    await scramjet.init();
+    const conn = new BareMux.BareMuxConnection("/bare-mux/worker.js");
+    await conn.setTransport("/epoxy/index.mjs", [
+      { wisp: "wss://wisp.mercurywork.shop/" }
+    ]);
   } catch (err) {
-    console.error("[dd-web] Scramjet init failed:", err);
+    console.error("[dd-web] bare-mux transport setup failed:", err);
   }
 
   form.addEventListener("submit", (event) => {
@@ -48,6 +38,7 @@ async function boot() {
     const target = normalizeUrl(urlInput.value.trim());
     if (!target) return;
 
+    const scramjet = window.__scramjet;
     if (scramjet) {
       try {
         window.location.href = scramjet.encodeUrl(target);

@@ -5,8 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dd-web</title>
     <link rel="stylesheet" href="/styles.css" />
-    <script defer src="/bare-mux.js"></script>
-    <script defer src="/scramjet/scramjet.bundle.js"></script>
+    <!-- bare-mux and scramjet must be plain scripts, NOT type="module" -->
+    <script src="/bare-mux.js"></script>
+    <script src="/scramjet/scramjet.all.js"></script>
+    <script>
+      // $scramjetLoadController is a global set by scramjet.all.js
+      const { ScramjetController } = $scramjetLoadController();
+      window.__scramjet = new ScramjetController({
+        prefix: "/scramjet/",
+        files: {
+          wasm: "/scramjet/scramjet.wasm.wasm",
+          all:  "/scramjet/scramjet.all.js",
+          sync: "/scramjet/scramjet.sync.js",
+        },
+        flags: {
+          captureErrors: true,
+          strictRewrites: true,
+        },
+      });
+      window.__scramjet.init();
+    </script>
     <script defer src="/app.js"></script>
   </head>
   <body>
