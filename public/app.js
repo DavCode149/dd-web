@@ -22,13 +22,15 @@ async function boot() {
     }
   }
 
-  // Configure bare-mux transport using the public Wisp server
-  // (required for scramjet to actually proxy requests)
+  // Set up bare-mux transport using the epoxy client loaded from /epoxy.js
+  // EpoxyTransport is the global set by epoxy's UMD bundle
   try {
     const conn = new BareMux.BareMuxConnection("/bare-mux/worker.js");
-    await conn.setTransport("/epoxy/index.mjs", [
-      { wisp: "wss://wisp.mercurywork.shop/" }
-    ]);
+    const EpoxyClient = EpoxyTransport.EpoxyClient;
+    await conn.setRemoteTransport(
+      new EpoxyClient({ wisp: "wss://wisp.mercurywork.shop/" }),
+      "wss://wisp.mercurywork.shop/"
+    );
   } catch (err) {
     console.error("[dd-web] bare-mux transport setup failed:", err);
   }

@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dd-web</title>
     <link rel="stylesheet" href="/styles.css" />
-    <!-- bare-mux and scramjet must be plain scripts, NOT type="module" -->
+    <!-- Load bare-mux and scramjet as plain scripts (NOT type="module") -->
     <script src="/bare-mux.js"></script>
     <script src="/scramjet/scramjet.all.js"></script>
     <script>
-      // $scramjetLoadController is a global set by scramjet.all.js
       const { ScramjetController } = $scramjetLoadController();
       window.__scramjet = new ScramjetController({
         prefix: "/scramjet/",
@@ -25,6 +24,7 @@
       });
       window.__scramjet.init();
     </script>
+    <script src="/epoxy.js"></script>
     <script defer src="/app.js"></script>
   </head>
   <body>
