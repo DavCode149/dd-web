@@ -4,6 +4,7 @@
   "description": "A Web Proxy made for DD Games",
   "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "node server.js"
   },
@@ -12,4 +13,5 @@
   "license": "ISC",
   "type": "commonjs",
   "private": true
+  "private": "true"
 }
