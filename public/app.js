@@ -7,63 +7,57 @@ function normalizeUrl(input) {
   }
 }
 
-async function registerServiceWorkerSafely() {
-  if (!('serviceWorker' in navigator)) return false;
-
-  try {
-    const registration = await navigator.serviceWorker.register('/sw.js?v=2');
-    await navigator.serviceWorker.ready;
-    return Boolean(registration);
-  } catch (error) {
-    console.error('[dd-web] Service worker registration failed:', error);
-    return false;
-  }
-}
-
-const scramjet = new ScramjetController({
-  files: {
-    wasm: '/scramjet/scramjet.wasm.wasm',
-    all:  '/scramjet/scramjet.all.js',
-    sync: '/scramjet/scramjet.sync.js',
-  },
-});
-
-function navigateToTarget(scramjet, target) {
-  if (!scramjet) {
-    window.location.href = target;
-    return;
-  }
-
-  try {
-    window.location.href = scramjet.encodeUrl(target);
-  } catch (error) {
-    console.error('[dd-web] Scramjet URL encode failed, falling back to direct nav:', error);
-    window.location.href = target;
-  }
-}
-
 async function boot() {
-  const form = document.getElementById('proxy-form');
-  const urlInput = document.getElementById('url');
+  const form = document.getElementById("proxy-form");
+  const urlInput = document.getElementById("url");
   if (!form || !urlInput) return;
 
-  await registerServiceWorkerSafely();
-
-  let scramjet = null;
-  try {
-    scramjet = await createScramjetController();
-  } catch (error) {
-    console.error('[dd-web] Scramjet controller init failed:', error);
+  // Register service worker
+  if ("serviceWorker" in navigator) {
+    try {
+      await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      await navigator.serviceWorker.ready;
+    } catch (err) {
+      console.error("[dd-web] Service worker registration failed:", err);
+    }
   }
 
-  form.addEventListener('submit', (event) => {
+  // Init Scramjet controller
+  let scramjet = null;
+  try {
+    const { ScramjetController } = $scramjetLoadController();
+    scramjet = new ScramjetController({
+      prefix: "/scramjet/",
+      files: {
+        wasm: "/scramjet/scramjet.wasm.wasm",
+        all:  "/scramjet/scramjet.all.js",
+        sync: "/scramjet/scramjet.sync.js",
+      },
+      flags: {
+        captureErrors: true,
+        strictRewrites: true,
+      },
+    });
+    await scramjet.init();
+  } catch (err) {
+    console.error("[dd-web] Scramjet init failed:", err);
+  }
+
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
     const target = normalizeUrl(urlInput.value.trim());
     if (!target) return;
-    navigateToTarget(scramjet, target);
+
+    if (scramjet) {
+      try {
+        window.location.href = scramjet.encodeUrl(target);
+        return;
+      } catch (err) {
+        console.error("[dd-web] encodeUrl failed, falling back:", err);
+      }
+    }
+    window.location.href = target;
   });
 }
 
-boot().catch((error) => {
-  console.error('[dd-web] Boot failed:', error);
-});
+boot().catch((err) => console.error("[dd-web] Boot failed:", err));
