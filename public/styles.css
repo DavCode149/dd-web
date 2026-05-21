@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0b1020;
+  color: #f4f7ff;
+}
+
+.app {
+  max-width: 780px;
+  margin: 8vh auto;
+  padding: 24px;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #2c335f;
+  background: #0d1430;
+  color: inherit;
+}
+
+button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #5a6bff;
+  color: white;
+  font-weight: 600;
+}
+
+.hint {
+  margin-top: 16px;
+  opacity: 0.8;
+}
