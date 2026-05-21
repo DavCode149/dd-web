@@ -50,6 +50,11 @@ After deployment (Vercel or Netlify):
 
 This starter currently loads Scramjet and bare-mux from jsDelivr for bootstrap convenience.
 For production traffic, self-host Scramjet + transport assets and configure your preferred transport backend.
+
+
+## Stability note
+
+To avoid deployment failures when external CDN worker imports are blocked, `public/sw.js` is intentionally a minimal passthrough service worker. Scramjet is initialized from the page script with guarded error handling.
 Then open `http://localhost:8080`.
 
 ## What this starter includes
