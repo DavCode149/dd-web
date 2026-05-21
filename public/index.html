@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dd-web</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2.1.7/dist/index.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@1.0.2-dev/scramjet.all.js"></script>
+    <script defer src="/app.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <h1>dd-web</h1>
+      <p>Experimental browser-like proxy shell powered by Scramjet.</p>
+
+      <form id="proxy-form">
+        <input id="url" type="url" placeholder="https://example.com" required />
+        <button type="submit">Go</button>
+      </form>
+
+      <p class="hint">Make sure your deployment also serves a compatible Bare transport and Scramjet worker bundles locally for production use.</p>
+    </main>
+  </body>
+</html>
