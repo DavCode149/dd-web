@@ -3,6 +3,9 @@
 A Scramjet-based web proxy frontend that can be deployed on static hosting so many users can access it from a public domain.
 
 ## Local development
+A starter web-based proxy shell that uses the Scramjet runtime from MercuryWorkshop.
+
+## Run locally
 
 ```bash
 node server.js
@@ -47,3 +50,16 @@ After deployment (Vercel or Netlify):
 
 This starter currently loads Scramjet and bare-mux from jsDelivr for bootstrap convenience.
 For production traffic, self-host Scramjet + transport assets and configure your preferred transport backend.
+Then open `http://localhost:8080`.
+
+## What this starter includes
+
+- Browser-like landing page with URL bar
+- Scramjet controller bootstrapping on the client
+- Scramjet service worker (`public/sw.js`) using the official fetch interception pattern
+
+## Important production note
+
+This starter loads Scramjet and bare-mux from jsDelivr for convenience. For real deployments,
+serve Scramjet and your transport locally, and configure `BareMuxConnection` + transport setup
+based on the Scramjet docs.

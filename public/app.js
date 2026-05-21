@@ -20,6 +20,7 @@ async function boot() {
     } catch (error) {
       console.error('[dd-web] Service worker registration failed:', error);
     }
+    await navigator.serviceWorker.register('/sw.js');
   }
 
   if (window.$scramjetLoadController) {
