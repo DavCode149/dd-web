@@ -1,0 +1,16 @@
+{
+  "name": "dd-web",
+  "version": "0.1.0",
+  "description": "A Web Proxy made for DD Games",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": "true"
+}
